@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>轮播图demo</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #slide{
+            margin:100px auto 0;
+            position: relative;
+            width: 580px;
+            height: 320px;
+            overflow: hidden;
+        }
+        #slide:hover #prev,#slide:hover #next{
+            opacity:1;
+        }
+        #track{
+            position: absolute;
+            width: 3480px;
+            font-size: 0;
+        }
+        .items{
+            display: inline-block;
+            width: 580px;
+            height: 320px;
+        }
+        .items div{
+            width: 100%;
+            height: 100%;
+            font-size: 50px;
+            color: #fff;
+            text-align: center;
+            line-height: 320px;
+        }
+        .pic1{
+            background-color: #fe9191;
+        }
+        .pic2{
+            background-color: #f6e26e;
+        }
+        .pic3{
+            background-color: #85c253;
+        }
+        #prev,#next{
+            display: block;
+            position: absolute;
+            top:135px;
+            width: 50px;
+            height:50px;
+            line-height: 50px;
+            border-radius: 50%;
+            font-size: 18px;
+            color:rgba(255,255,255,.7);
+            background-color: rgba(0,0,0,.2);
+            text-align: center;
+            cursor: pointer;
+            opacity:0;
+        }
+        #prev:hover,#next:hover{
+            color:rgba(255,255,255,1);
+            background-color: rgba(0,0,0,.3);
+        }
+        #next{
+            right:0;
+        }
+        #pager{
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            text-align: center;
+            font-size: 0;
+        }
+        #pager li{
+            display: inline-block;
+            margin: 0 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(0,0,0,.3);
+            cursor: pointer;
+            transition:background-color 0.5s;
+        }
+        #pager .current{
+            background-color: rgba(255,255,255,.9);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <div id="slide">
+            <ul id="track" style="left:0px;">
+                <li class="items">
+                    <div class="pic1">ONE</div>
+                </li>
+                <li class="items">
+                    <div class="pic2">TWO</div>
+                </li>
+                <li class="items">
+                    <div class="pic3">THREE</div>
+                </li>
+            </ul>
+            <ol id="pager">
+                <li class="current"></li>
+                <li></li>
+                <li></li>
+            </ol>
+            <a id="prev" class="prev">prev</a>
+            <a id="next" class="next">next</a>
+        </div>
+    </div>
+
+
+    <script>
+
+        var slide = document.getElementById("slide");
+        var track = document.getElementById("track");
+        track.innerHTML += track.innerHTML;
+        var items = track.getElementsByClassName("items");
+        var doubleNum = items.length;
+        var iNum = doubleNum/2;
+        var iWidth = slide.offsetWidth;
+
+        var prev = document.getElementById("prev");
+        var next = document.getElementById("next");
+        var pages = document.getElementById("pager").getElementsByTagName("li");
+
+        var now = 0;
+        var timer = null;
+
+        timer = setInterval(autoplay,3000);
+
+        function autoplay(){
+            next.onclick();
+        }
+
+        next.onclick = function(){
+            if(now == doubleNum-1){
+                now = iNum;
+                track.style.left = -iWidth*(iNum-1) + "px";
+            }
+            else{
+                now++;
+            }
+            move(track, -iWidth*now);
+            setPager();
+        }
+
+        prev.onclick = function(){
+            if(now == 0){
+                now = iNum - 1;
+                track.style.left = -iWidth*iNum + "px";
+            }
+            else{
+                now--;
+            }
+            move(track, -iWidth*now);
+            setPager();
+        }
+
+        slide.onmouseover = function(){
+            clearInterval(timer);
+        }
+
+        slide.onmouseout = function(){
+            timer = setInterval(autoplay,3000);
+        }
+
+        for(var i=0; i<pages.length; i++){
+            pages[i].index = i;
+            pages[i].onclick = function(){
+                if(now < iNum){
+                    now = this.index;
+                    move(track, -iWidth*now);
+                }
+                else{
+                    now = this.index + iNum;
+                    move(track, -iWidth*now);
+                }
+                setPager();
+            }
+        }
+
+        function move(obj, target){
+            obj.timer && clearInterval(obj.timer);
+
+            obj.timer = setInterval(function(){
+                var stop = true;
+                var cur = parseInt(obj.style.left);
+                var speed = (target - cur) / 10;
+                speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+                if(cur != target){
+                    stop = false;
+                    obj.style.left = cur + speed + "px";
+                }
+                if(stop){
+                    clearInterval(obj.timer);
+                    obj.timer = null;
+                }
+            },30);
+        }
+
+        function setPager(){
+            for(var i=0; i<pages.length; i++){
+                pages[i].className = "";
+            }
+            pages[now%iNum].className = "current";
+        }
+
+
+    </script>
+    
+</body>
+</html>
