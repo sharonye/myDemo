@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>倒计时和正计时</title>
+	<style>
+		#container{
+			width:600px;
+			margin:100px auto 0;
+			text-align: center;
+		}
+		#container > div{
+			margin-bottom: 50px;
+		}
+		h3{
+			color:#374d71;
+		}
+		.time{
+			font-size:30px;
+			color:#eb7350;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+
+	<div id="container">
+		<div>
+			<h3>距离2022年元旦还有</h3>
+			<div id="box1" class="time">天 小时 分 秒</div>
+		</div>
+
+		<div>
+			<h3>2017年已经过了</h3>
+			<div id="box2" class="time">天 小时 分 秒</div>
+		</div>
+
+	</div>
+
+	<script>
+		function countDay(year,month,date,isCountdown){
+			var now = new Date();
+			var target = new Date(year,month-1,date);
+			var totalSeconds;
+
+			if(isCountdown){
+				totalSeconds = parseInt((target.getTime() - now.getTime())/1000);
+			}else{
+				totalSeconds = parseInt((now.getTime() - target.getTime())/1000);
+			}
+
+			var d = parseInt(totalSeconds/(60*60*24));
+			var h = parseInt(totalSeconds/(60*60)%24);
+			var m = parseInt((totalSeconds - d*24*60*60 - h*60*60)/60);
+			var s = parseInt((totalSeconds - d*24*60*60 - h*60*60)%60);
+
+			var result = {
+				day:d,
+				hour:h,
+				minutes:m,
+				seconds:s
+			}
+
+			return result;
+		}
+
+		var box1 = document.getElementById("box1");
+		box1.timer = setInterval(function(){
+			var t1 = countDay(2022,1,1,true);
+			box1.innerHTML = t1.day + "天 " + t1.hour + "小时 " + t1.minutes + "分 " + t1.seconds + "秒";
+		},1000);
+
+		var box2 = document.getElementById("box2");
+		box2.timer = setInterval(function(){
+			var t2 = countDay(2017,1,1,false);
+			box2.innerHTML = t2.day + "天 " + t2.hour + "小时 " + t2.minutes + "分 " + t2.seconds + "秒";
+		},1000);
+
+
+	</script>
+	
+</body>
+</html>
