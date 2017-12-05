@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>鼠标悬停提示</title>
+	<style>
+		#container{
+			margin:100px auto 0;
+			width:570px;
+		}
+		ul{
+			padding: 0;
+			font-size: 0;
+		}
+		li{
+			list-style: none;
+		}
+		h5{
+			font-weight: normal;
+			font-size: 12px;
+			color:#666;
+			margin:8px 0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow:ellipsis;
+		}
+		.items{
+			display:inline-block;
+			padding:10px 10px 0;
+			width:150px;
+			margin:10px;
+			cursor: pointer;
+		}
+		.items:hover{
+			box-shadow: 0 0 10px 0 #abccb5;
+		}
+		.items:hover h5{
+			color: #43bf6a;
+		}
+		.imgbox{
+			height:120px;
+			background-color: #eee;
+		}
+		.tip{
+			position:absolute;
+			color: #fff;
+			background-color: rgba(0,0,0,.6);
+			font-size: 12px;
+			padding:5px 10px;
+			border-radius: 5px;
+			display: none;
+		}
+		.tip:before{
+			content:'';
+			display: block;
+			position: absolute;
+			top:-5px;
+			left:-5px;
+			width:10px;
+			height:10px;
+			border-radius: 50%;
+			background-color: #43bf6a;
+		}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<ul id="newsList">
+			<li class="items">
+				<div class="imgbox"></div>
+				<h5>天文学家们意外在仙女星系M31方向发现了一对巨型黑洞</h5>
+			</li>
+			<li class="items">
+				<div class="imgbox"></div>
+				<h5>“悟空”卫星获得了目前世界上最精确的高能电子宇宙线能谱</h5>
+			</li>
+			<li class="items">
+				<div class="imgbox"></div>
+				<h5>系外巨行星猎人：寻找尘埃盘</h5>
+			</li>
+			<li class="items">
+				<div class="imgbox"></div>
+				<h5>太阳系迎来首个星际访客“奥陌陌”</h5>
+			</li>
+			<li class="items">
+				<div class="imgbox"></div>
+				<h5>首次观测到引力波光学对应体新闻发布会</h5>
+			</li>
+			<li class="items">
+				<div class="imgbox"></div>
+				<h5>费米伽马射线暴监测器唤起全世界关注碰撞合并的中子星</h5>
+			</li>
+		</ul>
+	</div>
+	<script>
+		var news = document.getElementsByClassName("items");
+		var tip = document.createElement("div");
+		tip.className = "tip";
+		document.getElementsByTagName("body")[0].appendChild(tip);
+		for(var i=0; i<news.length; i++){
+			news[i].onmouseover = function(e){
+				tip.style.display = "block";
+				var txt = this.getElementsByTagName("h5")[0].innerHTML;
+				tip.innerHTML = txt;
+			}
+			news[i].onmousemove = function(e){
+				tip.style.left = e.pageX + 20 + "px";
+				tip.style.top = e.pageY + 15 + "px";
+			}
+			news[i].onmouseout = function(e){
+				tip.style.display = "none";
+			}
+		}
+
+	</script>
+</body>
+</html>
