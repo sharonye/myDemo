@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>可拖拽的弹窗</title>
+	<style>
+		.mask{
+			position: fixed;
+			top:0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background-color: rgba(0,0,0,.3);
+		}
+		.popup{
+			position: absolute;
+			width: 320px;
+			background-color: #fff;
+			box-shadow: 0 0 10px 0 #999;
+		}
+		.p-header{
+			height:46px;
+			line-height: 46px;
+			padding-left: 20px;
+			border-bottom: 1px solid #e3e3e3;
+			user-select:none;
+			cursor:move;
+		}
+		.p-content{
+			padding:20px;
+			text-align: center;
+		}
+		.p-btn{
+			text-align: center;
+			padding:10px 0 20px;
+		}
+		.btn{
+			display: inline-block;
+			width: 100px;
+			height: 36px;
+			line-height: 36px;
+			background-color: #4996dc;
+			color: #fff;
+			border-radius:5px;
+			text-decoration: none;
+		}
+	</style>
+</head>
+<body>
+	<div class="mask">
+		<div id="popup" class="popup">
+			<div id="head" class="p-header">提示</div>
+			<div class="p-content">这是一个可以拖动的弹窗</div>
+			<div class="p-btn">
+				<a href="#" class="btn">确定</a>
+			</div>
+		</div>
+	</div>
+
+	<script>
+
+		var popup = document.getElementById("popup");
+		var head = document.getElementById("head");
+		var popupW = popup.clientWidth; //弹窗宽
+		var popupH = popup.clientHeight; //弹窗高
+		var windowW = window.innerWidth; //窗口宽
+		var windowH = window.innerHeight; //窗口高
+
+		popup.style.left = (windowW - popupW)/2 + "px";
+		popup.style.top = (windowH - popupH)/2 + "px";
+
+		var isMove = false; //是否移动状态标志位
+		var popupX = parseInt(popup.style.left); //弹窗起始位置x
+		var popupY = parseInt(popup.style.top); //弹窗起始位置y
+
+		var startX; //鼠标起始位置x
+		var startY; //鼠标起始位置y
+
+		head.onmousedown = function(e){
+			isMove = true;
+			popupX = parseInt(popup.style.left);
+			popupY = parseInt(popup.style.top);
+			startX = e.pageX;
+			startY = e.pageY;
+		}
+
+		document.onmousemove = function(e){
+			if(isMove){
+				var currX = e.pageX; //鼠标当前位置x
+				var currY = e.pageY; //鼠标当前位置y
+
+				popup.style.left = popupX + (currX-startX) + "px";
+				popup.style.top = popupY + (currY-startY) + "px";
+			}
+		}
+
+		document.onmouseup = function(){
+			isMove = false;
+			popupX = parseInt(popup.style.left);
+			popupY = parseInt(popup.style.top);
+		}
+
+	</script>
+	
+</body>
+</html>
