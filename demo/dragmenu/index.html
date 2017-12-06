@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>拖动调整栏目顺序</title>
+	<style>
+		*{
+			margin:0;
+			padding: 0; 
+		}
+		.container{
+			margin:80px auto 0;
+			text-align: center;
+		}
+		h3{
+			color: #00a1d6;
+			margin-bottom: 30px;
+		}
+		.nav-list{
+			position: relative;
+			display: inline-block;
+			width:80px;
+			background-color: #f6f9fa;
+			border:1px solid #e5e9ef;
+			border-radius: 4px;
+			overflow: hidden;
+		}
+		.item{
+			position: relative;
+			width: 100%;
+			height: 40px;
+			line-height: 40px;
+			font-size: 14px;
+			list-style: none;
+			user-select:none;
+		}
+		.item:hover{
+			color: #fff;
+			background-color: #ff8eb3;
+		}
+		.select{
+			position: absolute;
+			z-index: 1;
+			color: #fff;
+			background-color: #ff8eb3;
+		}
+		.holder{
+			position: relative;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="container">
+		<h3>↓ 拖动调整栏目顺序 ↓</h3>
+		<ul id="nav" class="nav-list">
+			<li class="item">直播</li>
+			<li class="item">动画</li>
+			<li class="item">番剧</li>
+			<li class="item">游戏</li>
+			<li class="item">电影</li>
+			<li class="item">音乐</li>
+			<li class="item">舞蹈</li>
+			<li class="item">娱乐</li>
+			<li class="item">时尚</li>
+			<li class="item">鬼畜</li>
+		</ul>
+	</div>
+
+	<script src="../../lib/jquery-3.2.1.min.js"></script>
+	<script>
+
+		var nav = $("#nav");
+		var items = $(".item");
+		var itemHeight = items.eq(0).height();
+		var isMove = false; //是否移动状态标志位
+
+		var startY; //鼠标起始位置y
+		var itemY; //元素起始位置y
+		var itemIndex; //所选元素
+
+		var holder = $("<li class='item holder'></li>");
+		
+		nav.on("mousedown",".item",function(e){
+			isMove = true;
+			startY = e.pageY;
+			itemIndex = $(this).index();
+			itemY = itemHeight*itemIndex;
+			$(this).addClass("select")
+					.css("top",itemY)
+					.after(holder);
+		});
+
+
+		$(document).on("mousemove",function(e){
+			if(isMove){
+				var currY = e.pageY; //鼠标当前位置y
+				var dis = currY - startY; //移动的距离
+
+				var itemTop = itemY + dis;
+				if(itemTop < 0){
+					itemTop = 0;
+				}
+				if(itemTop > (nav.height() - itemHeight)){
+					itemTop = (nav.height() - itemHeight);
+				}
+
+				items.eq(itemIndex).css("top",itemTop + "px");
+
+				var holdPoint = itemIndex;
+				holdPoint += Math.round((dis + itemHeight/5)/itemHeight);
+				if(holdPoint > items.length){
+					holdPoint = items.length;
+				}
+				if(holdPoint < 0){
+					holdPoint = 0;
+				}
+				if(dis>0){
+					items.eq(holdPoint).after(holder);
+				}
+				else{
+					items.eq(holdPoint).before(holder);
+				}
+			}
+		}).on("mouseup",function(){
+			isMove = false;
+			if($(".holder").length){
+				items.removeClass("select").removeAttr("style");
+				holder.after(items.eq(itemIndex)).remove();
+				items = $(".item");
+			}
+		});
+
+	</script>
+	
+</body>
+</html>
