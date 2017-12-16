@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Canvas时钟</title>
+	<style>
+		.container{
+			margin: 100px auto 0;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<canvas id="canvas" width="500" height="400">您的浏览器不支持canvas</canvas>
+	</div>
+
+	<script>
+		window.requestAnimFrame = (function(){
+		  return  window.requestAnimationFrame       ||
+		          window.webkitRequestAnimationFrame ||
+		          window.mozRequestAnimationFrame    ||
+		          function( callback ){
+		            window.setTimeout(callback, 1000 / 60);
+		          };
+		})();
+
+		// 圆角矩形 参数：ctx，左上角坐标(x,y)，宽度w，高度h，圆角半径r
+		function roundRect(ctx, x, y, w, h, r){
+			ctx.moveTo( (x+r), y );
+			ctx.arcTo( (x+w), y, (x+w), (y+h-r), r );
+			ctx.arcTo( (x+w), (y+h), (x+r), (y+h), r );
+			ctx.arcTo( x, (y+h), x, (y+r), r );
+			ctx.arcTo( x, y, (x+r), y, r );
+		}
+
+		var canvas = document.getElementById("canvas"),
+			ctx = canvas.getContext("2d"),
+			centerX = canvas.width/2,
+			centerY = canvas.height/2,
+			PI = Math.PI;
+
+		function drawClock(){
+			ctx.clearRect(0,0,canvas.width,canvas.height);
+
+			var now = new Date(),
+				second = now.getSeconds()+now.getMilliseconds()/1000,
+				minute = now.getMinutes() + second/60,
+				hour = now.getHours() + minute/60;
+
+			hour = hour > 12 ? hour-12 : hour ;
+
+
+			// 外层底色
+			ctx.save();
+			ctx.translate(centerX, centerY);//设置(0,0)点位置
+			ctx.fillStyle = "black";
+			roundRect(ctx, -135, -135, 270, 270, 50);
+			ctx.fill();
+			ctx.restore();
+
+
+			// 表盘
+			ctx.beginPath();
+			ctx.lineWidth = 1;
+			ctx.fillStyle = "#fff";
+			ctx.arc(centerX, centerY, 120, 0, PI*2, false);
+			ctx.fill();
+			ctx.closePath();
+
+			// 表盘中心
+			ctx.beginPath();
+			ctx.lineWidth = 2;
+			ctx.strokeStyle = "black";
+			ctx.arc(centerX, centerY, 3, 0, PI*2, false);
+			ctx.stroke();
+			ctx.closePath();
+
+			// 时刻度
+			ctx.save();
+			ctx.translate(centerX, centerY);
+			ctx.font = "30px Arial";
+			ctx.fillStyle = "black";
+			ctx.textAlign = "center";
+			ctx.textBaseline = 'middle';
+			for(var i=1; i<13; i++){
+				var angle = i*30*PI/180;
+				ctx.fillText(i, 100*Math.sin(angle), -100*Math.cos(angle));
+			}
+			ctx.restore();
+
+			// 时针
+			ctx.save();
+			ctx.lineWidth = 3;
+			ctx.lineCap = "round";
+			ctx.strokeStyle = "black";
+			ctx.translate(centerX, centerY);
+			ctx.rotate(hour*30*PI/180);
+			ctx.beginPath();
+			ctx.moveTo(0, -65);
+			ctx.lineTo(0, 0);
+			ctx.stroke();
+			ctx.closePath();
+			ctx.restore();
+
+			// 分针
+			ctx.save();
+			ctx.lineWidth = 3;
+			ctx.lineCap = "round";
+			ctx.strokeStyle = "black";
+			ctx.translate(centerX, centerY);
+			ctx.rotate(minute*6*PI/180);
+			ctx.beginPath();
+			ctx.moveTo(0, -102);
+			ctx.lineTo(0, 0);
+			ctx.stroke();
+			ctx.closePath();
+			ctx.restore();
+
+			// 秒针
+			ctx.save();
+			ctx.lineWidth = 2;
+			ctx.lineCap = "round";
+			ctx.strokeStyle = "#f50";
+			ctx.translate(centerX, centerY);
+			ctx.rotate(second*6*PI/180);
+			ctx.beginPath();
+			ctx.moveTo(0, -105);
+			ctx.lineTo(0, 10);
+			ctx.stroke();
+			ctx.closePath();
+			ctx.restore();
+
+			// 表盘中心
+			ctx.beginPath();
+			ctx.lineWidth = 2;
+			ctx.strokeStyle = "#f50";
+			ctx.arc(centerX, centerY, 1, 0, PI*2, false);
+			ctx.stroke();
+			ctx.closePath();
+
+			requestAnimFrame(drawClock);
+
+		}
+
+		drawClock();
+	</script>
+</body>
+</html>
